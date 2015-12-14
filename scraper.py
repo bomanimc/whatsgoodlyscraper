@@ -1,5 +1,6 @@
 import requests
 
+# === Incomplete Portions of the Hopeful Token Generation Part ===
 # usersURL = 'https://whatsgoodly.com/api/v1/users/'
 # sex = '0' # 0 for male, 1 for female
 
@@ -28,6 +29,11 @@ import requests
 # signIn = requests.post(usersURL, params=signInParams, headers=signInHeaders, verify=False)
 # print(signIn.status_code)
 # print(signIn.text)
+# =============================================================
+
+
+
+
 
 # ==== THIS IS SOME EXAMPLE JSON ====
 # {"id":321903,"user":{"id":42030,"username":"DeezNutzFam","gender":0,"karma":2222,"university_short":"Mizzou"},
@@ -39,9 +45,6 @@ import requests
 # "text":"No, it should be girls only. We want to know how to impress you when we urinate.","vote":null,"poll_instance":321903,
 # "count":22,"user":{"id":65102,"username":"MisterPotatoHead","gender":0,"karma":2261,"university_short":null},
 # "created_date":"2015-12-14T00:40:46.123112Z","deletable":false},"recycled":true,"universal":true,"vote_aggregate":0,"verified":true}
-
-lat = "42.045072"
-lon = "-87.687697"
 
 class User:
 	def __init__(self, raw):
@@ -66,7 +69,6 @@ class Poll:
 			self.user = User(raw['user'])
 			self.id = raw['id']
 			self.question = raw['question']
-			print(raw['question'])
 			self.sexes = raw['gender'] # I think it's 0 for male, 1 for femaile, and 2 for both.
 			self.options = raw['options']
 			self.option_counts = raw['option_counts']
@@ -77,7 +79,9 @@ class Poll:
 			self.top_comment = None if (raw['top_comment'] == None) else Comment(raw['top_comment'])
 
 
-pollsURL = 'https://whatsgoodly.com/api/v1/polls/?latitude=' + lat + '&longitude=' + lon
+lat = "42.045072"
+lon = "-87.687697"
+pollsURL = 'https://whatsgoodly.com/api/v1/polls/?latitude=' + lat + '&longitude=' + lon + '&top=0'
 
 pollsHeaders = {
 	'Accept': 'application/json',
@@ -88,7 +92,8 @@ pollsHeaders = {
 	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 5.1; Custom Phone - 5.1.0 - API 22 - 768x1280 Build/LMY47D)',
 	'Authorization'	: 'Token f8db02fcd151cc661a0176a97ca1d9de0616e7b6'
 }
-
+ 
+#Gather data from each page
 def paginateRequests(url):
 	pageResults = []
 	allObjects = []
@@ -107,7 +112,8 @@ def paginateRequests(url):
 		count = count + 1 
 
 	return allObjects
-		
+
+#Create a objects from the collected data
 def createPollObjects(rawObjects):
 	pollObjects = []
 	for rawPoll in rawObjects:
@@ -115,7 +121,8 @@ def createPollObjects(rawObjects):
 		pollObjects.append(newPoll)
 	return pollObjects
 
-
+#Print some polls so that we know it's working
 pollObjects = createPollObjects(paginateRequests(pollsURL))
-print(len(pollObjects))
+for poll in pollObjects:
+	print(poll.question)
 
