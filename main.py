@@ -2,6 +2,7 @@ import apiFunctions as api
 from datetime import datetime
 from dateutil import parser
 import geocoder
+import csv
 
 def main():
 	print('='*80)
@@ -22,9 +23,7 @@ def main():
 
 		# Set Coordinates to Defaults in File
 		api.setLocation(defLat, defLon)
-		print('Location Set to Lat: {}, Lon: {}\n'.format(defLat, defLon))
-
-		
+		print('Location Set to Lat: {}, Lon: {}\n'.format(defLat, defLon))	
 	except:
 		# Ask the user for a default location for Python2 and 3
 		try:
@@ -42,7 +41,7 @@ def main():
 		print('Default Location Set to Lat: {}, Lon: {}\n'.format(defCoords.latlng[0], defCoords.latlng[1]))
 		
 
-	# Print User Info Text
+	# Print Ternimal Instructions
 	print("Logging into Whatsgoodly...\n")
 	online = True
 	try:
@@ -60,14 +59,27 @@ def main():
 			
 			# Attempt to get a user choice for Python 2 or 3.
 			try:
-				choice = raw_input("\t*Read Polls\t\t(R)\n\n\t*Set Location\t\t(A <address or coordinates>)\n\n\t*Quit App\t\t(Q)\n\n->")
+				choice = raw_input("\t*Read Polls\t\t(R)\n\n\t*Write to CSV\t\t(W <filename>)\n\n\t*Set Location\t\t(A <address or coordinates>)\n\n\t*Quit App\t\t(Q)\n\n->")
 			except SyntaxError:
-				choice = input("\t*Read Polls\t\t(R)\n\n\t*Set Location\t\t(A <address or coordinates>)\n\n\t*Quit App\t\t(Q)\n\n->")
+				choice = input("\t*Read Polls\t\t(R)\n\n\t*Write to CSV\t\t(W <filename>)\n\n\t*Set Location\t\t(A <address or coordinates>)\n\n\t*Quit App\t\t(Q)\n\n->")
 			
 			# Read Polls
 			if choice.upper() == 'R':
 				currentPolls = api.getPolls()
 				pollPrint(currentPolls)
+
+
+			# Write the current poll's data to a CSV
+			# See class definitions in apiFunction.py for all attributes!
+			elif choice[0].upper() == 'W':
+				currentPolls = api.getPolls()
+				filename = choice[2:]
+				with open(filename, 'wt') as f:
+					writer = csv.writer(f)
+					for poll in currentPolls:
+						# Write values to CSV
+						writer.writerow([poll.id, poll.user.username, poll.user.userID, poll.question, poll.sexes, poll.options, poll.option_counts, poll.comment_count, poll.favorite_count, poll.created_date])
+
 
 			# Set Location via Address or Coordinates
 			elif choice[0].upper() == 'L':

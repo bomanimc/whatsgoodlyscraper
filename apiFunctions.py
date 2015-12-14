@@ -80,8 +80,8 @@ class Poll:
 			self.top_comment = None if (raw['top_comment'] == None) else Comment(raw['top_comment'])
 
 
-lat = ""
-lon = ""
+latGlobal = ""
+lonGlobal = ""
 
 pollsHeaders = {
 	'Accept': 'application/json',
@@ -94,15 +94,18 @@ pollsHeaders = {
 }
  
 def setLocation(lat, lon):
-	lat = str(lat)
-	lon = str(lon)
+	global latGlobal
+	global lonGlobal
+
+	latGlobal = str(lat)
+	lonGlobal = str(lon)
 
 def createRequestURL(page):
-	pollsURL = 'https://whatsgoodly.com/api/v1/polls/?latitude=' + lat + '&longitude=' + lon + '&top=0' + "&page=" + str(page)
+	pollsURL = 'https://whatsgoodly.com/api/v1/polls/?latitude=' + latGlobal + '&longitude=' + lonGlobal + '&top=0' + "&page=" + str(page)
 	return pollsURL
 
 #Gather data from each page
-def paginateRequests(url):
+def paginateRequests():
 	pageResults = []
 	allObjects = []
 	count = 0
@@ -130,6 +133,6 @@ def createPollObjects(rawObjects):
 	return pollObjects
 
 def getPolls():
-	pollObjects = createPollObjects(paginateRequests(pollsURL))
+	pollObjects = createPollObjects(paginateRequests())
 	return pollObjects
 
