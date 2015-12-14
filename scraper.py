@@ -29,15 +29,7 @@ import requests
 # print(signIn.status_code)
 # print(signIn.text)
 
-# {"id":4110,"username":"whatsgoodly","gender":0,"karma":520859,"university_short":null},"feed":{"id":2,"name":"Global","image_source":"http://d2tyav66cc90rz.cloudfront.net/global.png","category":1,
-# "approve_posts":false,"new_polls":0},"question":"What do you think of the phrase 'check your privilege'?","gender":2,
-# "options":["It's a good reminder ","It's an unfair disqualifier"],"option_counts":[128,286],"response":null,"vote":null,
-# "created_date":"2015-12-14T00:19:53.958947Z","favorite":null,"comment_count":6,"favorite_count":2,"recycle_count":0,"deleted":false,
-# "banner":"Northwestern","deletable":false,"recyclable":true,"top_comment":{"id":430321,
-# "text":"It's intentionally crafted to shut whites up/shame them while simultaneously appealing to their sense of guilt. It's emotionally abusive and logically unsound.",
-# "vote":null,"poll_instance":321925,"count":36,"user":{"id":33274,"username":"ritzcrackuhs","gender":0,"karma":2122,"university_short":"JHU"},
-# "created_date":"2015-12-14T00:26:59.858403Z","deletable":false},"recycled":false,"universal":true,"vote_aggregate":0,"verified":true}
-
+# ==== THIS IS SOME EXAMPLE JSON ====
 # {"id":321903,"user":{"id":42030,"username":"DeezNutzFam","gender":0,"karma":2222,"university_short":"Mizzou"},
 # "feed":{"id":2,"name":"Global","image_source":"http://d2tyav66cc90rz.cloudfront.net/global.png","category":1,
 # "approve_posts":false,"new_polls":0},"question":"Two guys get to a urinal at the same time. Who wins?","gender":2,
@@ -47,6 +39,9 @@ import requests
 # "text":"No, it should be girls only. We want to know how to impress you when we urinate.","vote":null,"poll_instance":321903,
 # "count":22,"user":{"id":65102,"username":"MisterPotatoHead","gender":0,"karma":2261,"university_short":null},
 # "created_date":"2015-12-14T00:40:46.123112Z","deletable":false},"recycled":true,"universal":true,"vote_aggregate":0,"verified":true}
+
+lat = "42.045072"
+lon = "-87.687697"
 
 class User:
 	def __init__(self, raw):
@@ -66,20 +61,23 @@ class Comment:
 class Poll:
 	def __init__(self, raw):
 		#feed = raw['feed']
-		self.user = User(raw['user'])
-		self.id = raw['id']
-		self.question = raw['question']
-		self.sexes = raw['gender'] # I think it's 0 for male, 1 for femaile, and 2 for both.
-		self.options = raw['options']
-		self.option_counts = raw['option_counts']
-		self.created_date = raw['created_date']
-		self.comment_count = raw['comment_count']
-		self.favorite_count = raw['favorite_count']
-		self.banner = raw['banner']
-		self.top_comment = Comment(raw['top_comment'])
+
+		if raw != '':
+			self.user = User(raw['user'])
+			self.id = raw['id']
+			self.question = raw['question']
+			print(raw['question'])
+			self.sexes = raw['gender'] # I think it's 0 for male, 1 for femaile, and 2 for both.
+			self.options = raw['options']
+			self.option_counts = raw['option_counts']
+			self.created_date = raw['created_date']
+			self.comment_count = raw['comment_count']
+			self.favorite_count = raw['favorite_count']
+			self.banner = raw['banner']
+			self.top_comment = None if (raw['top_comment'] == None) else Comment(raw['top_comment'])
 
 
-pollsURL = 'https://whatsgoodly.com/api/v1/polls/?latitude=0.0&longitude=0.0&page=1&filter=featured&top=0'
+pollsURL = 'https://whatsgoodly.com/api/v1/polls/?latitude=' + lat + '&longitude=' + lon
 
 pollsHeaders = {
 	'Accept': 'application/json',
@@ -91,13 +89,33 @@ pollsHeaders = {
 	'Authorization'	: 'Token f8db02fcd151cc661a0176a97ca1d9de0616e7b6'
 }
 
-polls = requests.get(pollsURL, headers=pollsHeaders, verify=False)
-print(polls.status_code)
+def paginateRequests(url):
+	pageResults = []
+	allObjects = []
+	count = 0
 
-pollObjects = []
-for poll in polls.json():
-	pollObjects.append(Poll(poll))
+	while True:
+		pageURL = url + "&page=" + str(count)
+		polls = requests.get(pageURL, headers=pollsHeaders, verify=False)
+		print('Status Code: {}, Count: {}'.format(polls.status_code, count))
+		pageResults = polls.json()
+		allObjects.extend(pageResults)
 
-for poll in pollObjects:
-	print(poll.question)
+		if(len(pageResults) != 0):
+			break
+
+		count = count + 1 
+
+	return allObjects
+		
+def createPollObjects(rawObjects):
+	pollObjects = []
+	for rawPoll in rawObjects:
+		newPoll = Poll(rawPoll)
+		pollObjects.append(newPoll)
+	return pollObjects
+
+
+pollObjects = createPollObjects(paginateRequests(pollsURL))
+print(len(pollObjects))
 
