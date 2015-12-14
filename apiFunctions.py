@@ -1,4 +1,5 @@
 import requests
+import geocoder
 
 # === Incomplete Portions of the Hopeful Token Generation Part ===
 # usersURL = 'https://whatsgoodly.com/api/v1/users/'
@@ -79,9 +80,8 @@ class Poll:
 			self.top_comment = None if (raw['top_comment'] == None) else Comment(raw['top_comment'])
 
 
-lat = "42.045072"
-lon = "-87.687697"
-pollsURL = 'https://whatsgoodly.com/api/v1/polls/?latitude=' + lat + '&longitude=' + lon + '&top=0'
+lat = ""
+lon = ""
 
 pollsHeaders = {
 	'Accept': 'application/json',
@@ -93,6 +93,14 @@ pollsHeaders = {
 	'Authorization'	: 'Token f8db02fcd151cc661a0176a97ca1d9de0616e7b6'
 }
  
+def setLocation(lat, lon):
+	lat = str(lat)
+	lon = str(lon)
+
+def createRequestURL(page):
+	pollsURL = 'https://whatsgoodly.com/api/v1/polls/?latitude=' + lat + '&longitude=' + lon + '&top=0' + "&page=" + str(page)
+	return pollsURL
+
 #Gather data from each page
 def paginateRequests(url):
 	pageResults = []
@@ -100,7 +108,7 @@ def paginateRequests(url):
 	count = 0
 
 	while True:
-		pageURL = url + "&page=" + str(count)
+		pageURL = createRequestURL(count)
 		polls = requests.get(pageURL, headers=pollsHeaders, verify=False)
 		# print('Status Code: {}, Count: {}'.format(polls.status_code, count))
 		pageResults = polls.json()
