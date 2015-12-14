@@ -102,7 +102,7 @@ def paginateRequests(url):
 	while True:
 		pageURL = url + "&page=" + str(count)
 		polls = requests.get(pageURL, headers=pollsHeaders, verify=False)
-		print('Status Code: {}, Count: {}'.format(polls.status_code, count))
+		# print('Status Code: {}, Count: {}'.format(polls.status_code, count))
 		pageResults = polls.json()
 		allObjects.extend(pageResults)
 
@@ -121,8 +121,7 @@ def createPollObjects(rawObjects):
 		pollObjects.append(newPoll)
 	return pollObjects
 
-#Print some polls so that we know it's working
-pollObjects = createPollObjects(paginateRequests(pollsURL))
-for poll in pollObjects:
-	print(poll.question)
+def getPolls():
+	pollObjects = createPollObjects(paginateRequests(pollsURL))
+	return pollObjects
 
