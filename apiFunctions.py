@@ -1,6 +1,8 @@
 import requests
 import geocoder
 
+requests.packages.urllib3.disable_warnings()
+
 # === Incomplete Portions of the Hopeful Token Generation Part ===
 # usersURL = 'https://whatsgoodly.com/api/v1/users/'
 # sex = '0' # 0 for male, 1 for female
@@ -71,7 +73,7 @@ class Poll:
 			self.id = raw['id']
 			self.question = raw['question']
 			self.sexes = raw['gender'] # I think it's 0 for male, 1 for femaile, and 2 for both.
-			self.options = raw['options']
+			self.options = [x.encode('utf-8') for x in raw['options']]
 			self.option_counts = raw['option_counts']
 			self.created_date = raw['created_date']
 			self.comment_count = raw['comment_count']
@@ -92,7 +94,7 @@ pollsHeaders = {
 	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 5.1; Custom Phone - 5.1.0 - API 22 - 768x1280 Build/LMY47D)',
 	'Authorization'	: 'Token f8db02fcd151cc661a0176a97ca1d9de0616e7b6'
 }
- 
+
 def setLocation(lat, lon):
 	global latGlobal
 	global lonGlobal
@@ -120,7 +122,7 @@ def paginateRequests():
 		if(len(pageResults) != 0):
 			break
 
-		count = count + 1 
+		count = count + 1
 
 	return allObjects
 
