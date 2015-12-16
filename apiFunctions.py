@@ -73,7 +73,7 @@ class Poll:
 			self.id = raw['id']
 			self.question = raw['question']
 			self.sexes = raw['gender'] # I think it's 0 for male, 1 for femaile, and 2 for both.
-			self.options = raw['options']
+			self.options = [x.encode('utf-8') for x in raw['options']]
 			self.option_counts = raw['option_counts']
 			self.created_date = raw['created_date']
 			self.comment_count = raw['comment_count']
