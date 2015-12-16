@@ -1,6 +1,8 @@
 import requests
 import geocoder
 
+requests.packages.urllib3.disable_warnings()
+
 # === Incomplete Portions of the Hopeful Token Generation Part ===
 # usersURL = 'https://whatsgoodly.com/api/v1/users/'
 # sex = '0' # 0 for male, 1 for female
