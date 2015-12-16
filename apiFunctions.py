@@ -1,7 +1,9 @@
 import requests
 import geocoder
+import sys
 
-requests.packages.urllib3.disable_warnings()
+if (sys.version_info > (3, 0)):
+	requests.packages.urllib3.disable_warnings()
 
 # === Incomplete Portions of the Hopeful Token Generation Part ===
 # usersURL = 'https://whatsgoodly.com/api/v1/users/'
