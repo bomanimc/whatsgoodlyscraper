@@ -74,12 +74,30 @@ def main():
 			elif choice[0].upper() == 'W':
 				currentPolls = api.getPolls()
 				filename = choice[2:]
-				with open(filename, 'wt') as f:
-					writer = csv.writer(f)
-					for poll in currentPolls:
-						# Write values to CSV
-						writer.writerow([poll.id, poll.user.username, poll.user.userID, poll.question, poll.sexes, poll.options, poll.option_counts, poll.comment_count, poll.favorite_count, poll.created_date])
 
+				poll_fieldnames = [
+					'id',
+					'question',
+					'sexes',
+					'options',
+					'option_counts',
+					'comment_count',
+					'favorite_count',
+					'created_date'
+				]
+
+				fieldnames = poll_fieldnames + ['userID', 'username']
+
+				with open(filename, 'wt') as f:
+					writer = csv.DictWriter(f, fieldnames)
+					writer.writeheader()
+					for poll in currentPolls:
+
+						poll_dict = {k:getattr(poll, k) for k in poll_fieldnames}
+						poll_dict['username'] = poll.user.username
+						poll_dict['userID'] = poll.user.userID
+
+						writer.writerow(poll_dict)
 
 			# Set Location via Address or Coordinates
 			elif choice[0].upper() == 'L':
