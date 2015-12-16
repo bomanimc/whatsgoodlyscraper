@@ -92,7 +92,7 @@ pollsHeaders = {
 	'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 5.1; Custom Phone - 5.1.0 - API 22 - 768x1280 Build/LMY47D)',
 	'Authorization'	: 'Token f8db02fcd151cc661a0176a97ca1d9de0616e7b6'
 }
- 
+
 def setLocation(lat, lon):
 	global latGlobal
 	global lonGlobal
@@ -120,7 +120,7 @@ def paginateRequests():
 		if(len(pageResults) != 0):
 			break
 
-		count = count + 1 
+		count = count + 1
 
 	return allObjects
 
