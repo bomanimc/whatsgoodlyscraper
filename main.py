@@ -75,6 +75,10 @@ def main():
 				currentPolls = api.getPolls()
 				filename = choice[2:]
 
+				if not filename:
+					print("ERROR: Please provide a filename.\n")
+					continue
+
 				poll_fieldnames = [
 					'id',
 					'question',
