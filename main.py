@@ -118,7 +118,9 @@ def pollPrint(allPolls):
 	for poll in allPolls:
 		print('-'*80)
 		date = parser.parse(poll.created_date)
-		print('Poll #{} Posted: {}\nQuestion: {}\nOptions:'.format(poll.id, date, poll.question))
+		outString = 'Poll #{} Posted: {}\nQuestion: {}\nOptions:'.format(poll.id, date, poll.question.encode('utf-8'))
+		outStringUni = unicode(outString, "utf-8")
+		print(outStringUni)
 		for i in range(0, len(poll.options)):
 			print('\t{} | Votes: {}'.format(poll.options[i], poll.option_counts[i]))
 
