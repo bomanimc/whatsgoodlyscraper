@@ -87,6 +87,7 @@ class Poll:
 latGlobal = ""
 lonGlobal = ""
 
+# Set some headers to send with the request to the private API
 pollsHeaders = {
 	'Accept': 'application/json',
 	'Content-type': 'application/json',
@@ -97,6 +98,7 @@ pollsHeaders = {
 	'Authorization'	: 'Token f8db02fcd151cc661a0176a97ca1d9de0616e7b6'
 }
 
+# This function sets the location based on user input
 def setLocation(lat, lon):
 	global latGlobal
 	global lonGlobal
@@ -104,11 +106,13 @@ def setLocation(lat, lon):
 	latGlobal = str(lat)
 	lonGlobal = str(lon)
 
+# Here, we create a correctly structured URL to hit the Whatsgoodly
+# private API with.
 def createRequestURL(page):
 	pollsURL = 'https://whatsgoodly.com/api/v1/polls/?latitude=' + latGlobal + '&longitude=' + lonGlobal + '&top=0' + "&page=" + str(page)
 	return pollsURL
 
-#Gather data from each page
+# Gather data from each page until there are no more pages to go through
 def paginateRequests():
 	pageResults = []
 	allObjects = []
